@@ -1,9 +1,11 @@
 import library
 import public_modules
 import builtins
+import logging
 
 builtins.__dict__["library"] = library
 builtins.__dict__["public_modules"] = public_modules
+builtins.__dict__["logging"] = logging
 
 from abc import ABC, abstractmethod
 

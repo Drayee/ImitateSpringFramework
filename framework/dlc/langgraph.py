@@ -8,9 +8,14 @@ from typing import TypedDict, Annotated, Sequence
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 
+logger = logging.getLogger(__name__)
+
 class Main(BaseMain):
     def __init__(self):
 
+        self.app = None
+
+        # 定义状态
         class State(TypedDict):
             messages: Annotated[Sequence[BaseMessage], add_messages]
 
@@ -21,7 +26,19 @@ class Main(BaseMain):
         for name, func in library.dependency["langgraph"].items():
             self.workflow.add_node(name, func)
 
-        library.resource["langgraph_app"] = self.workflow.compile()
+        self.app = self.workflow.compile()
+
+        # 定义获取 langgraph 图的函数
+        def get_graph():
+            try:
+                from IPython.display import display, Image
+                display(Image(self.app.get_graph(xray=True).draw_png()))
+            except Exception as e:
+                logger.error(f"获取 langgraph 图失败: {e}")
+
+        library.resource["get_graph"] = get_graph
+
+        library.resource["langgraph_app"] = self.app
 
 def langgraph_node(name = None):
     def decorator(func):

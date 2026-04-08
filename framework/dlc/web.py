@@ -8,12 +8,13 @@
 from fastapi import FastAPI
 import uvicorn
 
-
+logger = logging.getLogger(__name__)
 
 # 检查服务配置文件是否存在
 def _check():
     import os
     if not os.path.exists("resource\\yaml\\service.yaml") and not os.path.exists("resource\\yaml\\service.yml"):
+        logger.error("service.yaml 或 service.yml 文件不存在")
         raise FileNotFoundError("service.yaml 或 service.yml 文件不存在")
 
 """
@@ -36,7 +37,9 @@ class Main(BaseMain):
         pass
 
     def loop_method(self):
+        logger.info(f"启动服务 {self.service_title}，监听地址 {self.service_host}:{self.service_port}")
         uvicorn.run(self.app, host=self.service_host, port=self.service_port)
+        logger.info("服务启动成功")
 
 """
     控制器装饰器
