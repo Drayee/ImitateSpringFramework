@@ -33,6 +33,9 @@ class Main(BaseMain):
         self.app = FastAPI(title=self.service_title, version=self.service_version)
 
     def build(self):
+        pass
+
+    def loop_method(self):
         uvicorn.run(self.app, host=self.service_host, port=self.service_port)
 
 """

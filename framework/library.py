@@ -1,7 +1,7 @@
 import os
 
 # 依赖库(类)
-dependencies = {}
+dependencies = {"Service": {}}
 
 # 修饰器
 decorator = {}
