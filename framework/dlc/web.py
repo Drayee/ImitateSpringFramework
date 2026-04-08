@@ -24,7 +24,10 @@ class Main(BaseMain):
 
     def __init__(self):
         _check()
-        library.dependencies["Controller"] = {}
+        library.dependencies["PostController"] = {}
+        library.dependencies["GetController"] = {}
+        library.dependencies["PostAutoController"] = {}
+        library.dependencies["GetAutoController"] = {}
 
         self.service_title = library.resource_yaml["service.title"]
         self.service_version = library.resource_yaml["service.version"]
@@ -34,7 +37,14 @@ class Main(BaseMain):
         self.app = FastAPI(title=self.service_title, version=self.service_version)
 
     def build(self):
-        pass
+        for name, func in library.dependencies["PostController"].items():
+            self.app.add_api_route(library.resource["path"][name], func, methods=["POST"])
+        for name, func in library.dependencies["GetController"].items():
+            self.app.add_api_route(library.resource["path"][name], func, methods=["GET"])
+        for name, func in library.dependencies["PostAutoController"].items():
+            self.app.add_api_route(library.resource["path"][name], func, methods=["POST"])
+        for name, func in library.dependencies["GetAutoController"].items():
+            self.app.add_api_route(library.resource["path"][name], func, methods=["GET"])
 
     def loop_method(self):
         logger.info(f"启动服务 {self.service_title}，监听地址 {self.service_host}:{self.service_port}")
@@ -42,15 +52,73 @@ class Main(BaseMain):
         logger.info("服务启动成功")
 
 """
-    控制器装饰器
+    post 控制器装饰器
+    用于定义 post 请求的控制器
+    :param path: 控制器路径
+    :param name: 控制器名称
+    :return: 控制器实例
 """
-def controller(path, name= None):
+def post_controller(path: str, name: str = None):
     def decorator(func):
         nonlocal name
         if name is None:
             name = func.__name__
         library.resource["path"][name] = path
-        library.dependencies["Controller"][name] = func
-        logger.info(f"Controller {name} 已加入库")
+        library.dependencies["PostController"][name] = func
+        logger.info(f"PostController {name} 已加入库")
+        return func
+    return decorator
+
+"""
+    get 控制器方法装饰器
+    用于定义 get 请求的控制器方法
+    :param path: 控制器路径
+    :param name: 控制器名称
+    :return: 控制器方法实例
+"""
+def get_controller(path: str, name: str = None):
+    def decorator(func):
+        nonlocal name
+        if name is None:
+            name = func.__name__
+        library.resource["path"][name] = path
+        library.dependencies["getController"][name] = func
+        logger.info(f"GetController {name} 已加入库")
+        return func
+    return decorator
+
+"""
+    post 自动填充参数控制器方法装饰器
+    用于定义 post 请求的控制器方法，自动填充参数
+    :param path: 控制器路径
+    :param name: 控制器名称
+    :return: 控制器方法实例
+"""
+def post_auto_controller(path: str, name: str = None):
+    def decorator(func):
+        nonlocal name
+        if name is None:
+            name = func.__name__
+        library.resource["path"][name] = path
+        library.dependencies["postAutoController"][name] = func
+        logger.info(f"PostAutoController {name} 已加入库")
+        return func
+    return decorator
+
+"""
+    get 自动填充参数控制器方法装饰器
+    用于定义 get 请求的控制器方法，自动填充参数
+    :param path: 控制器路径
+    :param name: 控制器名称
+    :return: 控制器方法实例
+"""
+def get_auto_controller(path: str, name: str = None):
+    def decorator(func):
+        nonlocal name
+        if name is None:
+            name = func.__name__
+        library.resource["path"][name] = path
+        library.dependencies["getAutoController"][name] = func
+        logger.info(f"GetAutoController {name} 已加入库")
         return func
     return decorator

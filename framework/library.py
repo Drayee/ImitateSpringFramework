@@ -1,13 +1,19 @@
 import os
 
 # 依赖库(类)
-dependencies = {"Service": {}}
+dependencies = {"Service": {}, "Check": {}}
 
 # 修饰器
 decorator = {}
 
 # 构建器
 builder = {}
+
+# dlc 初始化顺序
+init_order = []
+
+# dlc 构建顺序
+build_order = []
 
 # 主方法(循环方法)
 loop_method = None

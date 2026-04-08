@@ -6,8 +6,10 @@ logger = logging.getLogger(__name__)
 
 class Main(BaseMain):
 
+    init_order = -10
+
     def __init__(self):
-        pass
+        self.build()
 
     def build(self):
         __builtins__["library"] = library

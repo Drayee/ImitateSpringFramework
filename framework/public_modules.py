@@ -27,8 +27,6 @@ class Service:
     def build(self):
         return self.cls
 
-
-
 """
     自动注入装饰器
     :param same_name_args: 同名参数
@@ -117,4 +115,7 @@ def get_param_types(func):
     for name, param in sig.parameters.items():
         param_types[name] = param.annotation
     return param_types
+
+library.decorator["Service"] = Service
+library.decorator["auto_inject"] = auto_inject
 

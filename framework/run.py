@@ -2,6 +2,11 @@ import build
 import load_dlc
 import load_src
 import library
+import signal
+import sys
+import threading
+
+
 
 def run():
 
@@ -12,7 +17,17 @@ def run():
     # 构建 服务
     build.build()
 
+    thread = None
     if library.loop_method is not None:
-        # 运行 loop_method
-        library.loop_method()
+        thread = threading.Thread(target=library.loop_method)
+        thread.start()
+
+    def handle_exit(signum, frame):
+        print("Exiting...")
+        global thread
+        if thread is not None:
+            thread.join()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, handle_exit)
 

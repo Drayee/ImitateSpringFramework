@@ -13,6 +13,9 @@ class Main(ABC):
 
     name : str = "Main"
 
+    init_order : int = 0
+    build_order : int = 0
+
     @abstractmethod
     def __init__(self):
         pass

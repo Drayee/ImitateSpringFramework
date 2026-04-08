@@ -1,12 +1,9 @@
-from framework import Service, auto_inject, controller
-
-
-@controller("/login")
-def login():
-    print("登录")
+# @("/login")
+# def login():
+#     print("登录")
 
 @Service
 class LoginService:
-    @auto_inject()
-    def main(self):
-        print(123)
+    def login(self):
+        print("登录")
+

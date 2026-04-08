@@ -7,12 +7,11 @@ def build():
     for classes in library.dependencies["Service"]:
         library.resource_dependencies[str(classes)] = library.dependencies["Service"][classes].build()
 
+    for check_method in library.dependencies["Check"].values():
+        check_method.value[0]()
 
-    for build_method in library.builder.values():
-        build_method()
-
-    if library.loop_method is not None:
-        library.loop_method()
+    for build_method_name in library.build_order:
+        library.builder[build_method_name[0]]()
 
 
 

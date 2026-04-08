@@ -84,6 +84,8 @@ def safe_register(filepath, obj_name):
         # 打印编译后的代码
         exec(code, safe_globals, namespace)
     except Exception:
+        import traceback
+        traceback.print_exc()
         # 如果执行失败（例如缺少依赖），静默返回
         return
 
