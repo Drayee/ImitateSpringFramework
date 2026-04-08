@@ -1,3 +1,3 @@
-from framework import main
+from framework import run
 
-main.main()
+run.run()

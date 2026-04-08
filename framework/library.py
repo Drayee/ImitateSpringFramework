@@ -3,6 +3,15 @@ import os
 # 依赖库(类)
 dependencies = {}
 
+# 修饰器
+decorator = {}
+
+# 构建器
+builder = {}
+
+# 主方法(循环方法)
+loop_method = None
+
 # 资源库(用户定义)
 resource = {}
 

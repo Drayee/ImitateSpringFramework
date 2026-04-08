@@ -2,20 +2,7 @@ import ast
 import os
 import sys
 import library
-import build
 
-# ======================= 【核心：可无限扩展】 =======================
-# 格式：{ 装饰器名称: 注册到library的哪个分组 }
-DECORATOR_MAP = {
-    "Service": "Service",
-    "controller": "Controller",
-    "auto_inject": "AutoInject",
-    "Repository": "Repository",
-    "Component": "Component",
-    "Task": "Task",
-    "Middleware": "Middleware",
-}
-# ==================================================================
 
 def scan_py_files(folder="."):
     files = []
@@ -55,7 +42,7 @@ def parse_file(filepath):
                 dec_name = dec.func.id
 
             # 匹配 DECORATOR_MAP
-            if dec_name in DECORATOR_MAP and filepath not in files:
+            if dec_name in library.decorator.keys() and filepath not in files:
                 results.append((dec_name, obj_type, obj_name, filepath))
                 files.append(filepath)
     return results
@@ -98,28 +85,18 @@ def safe_register(filepath, obj_name):
         exec(code, safe_globals, namespace)
     except Exception:
         # 如果执行失败（例如缺少依赖），静默返回
-        import traceback
-        print(traceback.format_exc())
+        return
 
     # 获取目标对象并注册
     obj = namespace.get(obj_name)
     if obj is None:
         return
 
-def init_library():
-    # 自动初始化所有分组
-    for key in DECORATOR_MAP.values():
-        if key not in library.dependencies:
-            library.dependencies[key] = {}
+def run():
 
-def main():
-    init_library()
     files = scan_py_files()
 
     for f in files:
         items = parse_file(f)
         for _, _, obj_name, path in items:
             safe_register(path, obj_name)
-    print(library.dependencies)
-    build.build()
-

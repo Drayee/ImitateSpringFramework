@@ -4,6 +4,7 @@ import library
 import logging
 import inspect
 
+
 logger = logging.getLogger(__name__)
 
 """
@@ -26,19 +27,7 @@ class Service:
     def build(self):
         return self.cls
 
-"""
-    控制器装饰器
-"""
-def controller(path, name= None):
-    def decorator(func):
-        nonlocal name
-        if name is None:
-            name = func.__name__
-        library.resource["path"][name] = path
-        library.dependencies["Controller"][name] = func
-        logger.info(f"Controller {name} 已加入库")
-        return func
-    return decorator
+
 
 """
     自动注入装饰器
@@ -118,6 +107,7 @@ def auto_inject(*same_name_args, **customize_args):
                     except KeyError:
                         logger.error(f"调用函数 {func.__name__}, 参数 {param_item_} 不存在")
                         raise ValueError(f"参数 {param_item_} 不存在")
+            return func(*args, **kwargs)
         return wrapper
     return decorator
 
@@ -127,3 +117,4 @@ def get_param_types(func):
     for name, param in sig.parameters.items():
         param_types[name] = param.annotation
     return param_types
+
