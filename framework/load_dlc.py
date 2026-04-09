@@ -12,6 +12,8 @@ def run():
     main_classes = {}
 
     for plugin_name in plugin_files:
+        if plugin_name in library.resource_yaml["framework.disable_dlc"]:
+            continue
         plugin = importlib.import_module(f"dlc.{plugin_name}")
         all_items = {}
         for name, member in inspect.getmembers(plugin):
