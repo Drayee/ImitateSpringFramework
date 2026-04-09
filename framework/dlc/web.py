@@ -28,6 +28,7 @@ class Main(BaseMain):
         library.dependencies["GetController"] = {}
         library.dependencies["PostAutoController"] = {}
         library.dependencies["GetAutoController"] = {}
+        library.resource["path"] = {}
 
         self.service_title = library.resource_yaml["service.title"]
         self.service_version = library.resource_yaml["service.version"]
@@ -82,7 +83,7 @@ def get_controller(path: str, name: str = None):
         if name is None:
             name = func.__name__
         library.resource["path"][name] = path
-        library.dependencies["getController"][name] = func
+        library.dependencies["GetController"][name] = func
         logger.info(f"GetController {name} 已加入库")
         return func
     return decorator
@@ -100,7 +101,7 @@ def post_auto_controller(path: str, name: str = None):
         if name is None:
             name = func.__name__
         library.resource["path"][name] = path
-        library.dependencies["postAutoController"][name] = func
+        library.dependencies["PostAutoController"][name] = func
         logger.info(f"PostAutoController {name} 已加入库")
         return func
     return decorator
@@ -118,7 +119,7 @@ def get_auto_controller(path: str, name: str = None):
         if name is None:
             name = func.__name__
         library.resource["path"][name] = path
-        library.dependencies["getAutoController"][name] = func
+        library.dependencies["GetAutoController"][name] = func
         logger.info(f"GetAutoController {name} 已加入库")
         return func
     return decorator

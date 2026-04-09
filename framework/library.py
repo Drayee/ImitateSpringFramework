@@ -1,7 +1,9 @@
-import os
+import os,default
+
+from tensorflow.python.keras.utils.generic_utils import default
 
 # 依赖库(类)
-dependencies = {"Service": {}, "Check": {}}
+dependencies = default.dependencies
 
 # 修饰器
 decorator = {}
@@ -23,7 +25,7 @@ resource = {}
 
 # 资源库(系统) - yaml
 from resource import yml
-resource_yaml = yml.yaml_init()
+resource_yaml = default.resource_yaml | yml.yaml_init()
 
 # 资源库(系统) - json
 from resource import json

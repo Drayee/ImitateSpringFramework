@@ -25,11 +25,10 @@ class Main(BaseMain):
             plugin_count += 1
 
         for yml in library.resource_yaml.keys():
-            __builtins__[yml] = library.resource_yaml[yml]
+            __builtins__[yml.replace(".", "_")] = library.resource_yaml[yml]
             plugin_count += 1
 
         for json in library.resource_json.keys():
             __builtins__[json] = library.resource_json[json]
             plugin_count += 1
-
         logger.info(f"嵌入 {plugin_count} 个插件")

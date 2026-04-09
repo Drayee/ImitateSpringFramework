@@ -28,6 +28,19 @@ class Service:
         return self.cls
 
 """
+    方法修饰器
+    将方法入库的自动注入修饰器
+"""
+def Method(*same_name_args, **customize_args):
+    def decorator(func):
+        wrapped_func = auto_inject(*same_name_args, **customize_args)(func)
+        library.dependencies["Method"][func.__name__] = wrapped_func
+        logger.info(f"Method {func.__name__} 已加入库")
+        return wrapped_func
+    return decorator
+
+
+"""
     自动注入装饰器
     :param same_name_args: 同名参数
         例如: same_name_args = ("model", "compress_model")
@@ -83,17 +96,17 @@ def auto_inject(*same_name_args, **customize_args):
                     logger.error(f"调用函数 {func.__name__}, 第 {index} 个参数 类型错误, 应该是 {param_type}")
 
             # 开始自动注入参数
-            inject_args = [x for x in param_types.keys()[args_len:] if x not in kwargs.keys()]
+            inject_args = [x for x in list(param_types.keys())[args_len:] if x not in kwargs.keys()]
             for param_item_ in inject_args:
                 if param_item_ not in same_name_args:
                     param_item_ = customize_args[param_item_]
                 try:
                     match param_types[param_item_]:
                         # 字符串, 整数, 浮点数, 布尔类型, 从 resource_yaml 中获取
-                        case type("str") | type(1) | type(3.14) | type(True):
-                            kwargs[param_item_] = library.resource_yaml[param_item_]
+                        case type() as t if t in (str, int, float, bool):
+                            kwargs[param_item_] = library.resource_yaml[param_item_.replace("_", ".")]
                         # 字典, 列表类型, 从 resource_json 中获取
-                        case type({"dict": json.JSONEncoder}) | type(["list"]):
+                        case type() as t if t in (dict, list):
                             kwargs[param_item_] = library.resource_json[param_item_]
                         # 其他类型, 从 resource_dependencies 中获取
                         case _:
@@ -118,4 +131,5 @@ def get_param_types(func):
 
 library.decorator["Service"] = Service
 library.decorator["auto_inject"] = auto_inject
+library.decorator["Method"] = Method
 
