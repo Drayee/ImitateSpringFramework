@@ -22,6 +22,7 @@ text/
 │   ├── load_src.py       # 源文件加载
 │   ├── load_dlc.py       # DLC插件加载
 │   ├── public_modules.py # 公共模块
+│   ├── default.py        # 默认配置
 │   ├── dlc/              # DLC插件目录
 │   │   ├── web.py        # Web服务插件
 │   │   ├── embed.py      # 嵌入插件
@@ -53,7 +54,7 @@ class MyService:
         return self.value
 ```
 
-### 2. 依赖注入 (@auto_inject)
+### 2. 依赖注入 (@auto_inject, @Method)
 
 使用 `@auto_inject` 装饰器自动注入依赖：
 
@@ -61,6 +62,14 @@ class MyService:
 @auto_inject()
 def my_function(service: MyService, config: str):
     return service.do_something() + config
+```
+
+使用 `@Method` 装饰器将方法注册为服务方法, 用法和 `@auto_inject` 相同：
+
+```python
+@Method()
+def get_user(self, userId: int):
+    return self.db.query(f"SELECT * FROM users WHERE id = {userId}")
 ```
 
 支持两种参数注入方式：
@@ -194,28 +203,61 @@ DLC 插件加载器，扫描并加载 `framework/dlc/` 目录下的插件。
 ### 完整服务示例
 
 ```python
-from framework.public_modules import Service, auto_inject
+"""
+   这个文件需放在 `src/` 目录下
+"""
+from framework.public_modules import Service, auto_inject, Method
+
+
+# 如果安装了 embed.py 插件，这里不需要 import 也可以使用
+
 
 @Service
 class DatabaseService:
     def __init__(self):
         self.connection = "database_connection"
-    
+
     def query(self, sql):
         return f"Executing: {sql}"
+
 
 @Service
 class UserService:
     @auto_inject()
     def __init__(self, db: DatabaseService):
         self.db = db
-    
+
     def get_user(self, user_id):
         return self.db.query(f"SELECT * FROM users WHERE id = {user_id}")
+
+
+@Method
+def get_user(self, userId: int):
+    return self.db.query(f"SELECT * FROM users WHERE id = {userId}")
 
 @auto_inject()
 def main(user_service: UserService):
     print(user_service.get_user(1))
+```
+
+```python
+"""
+   这个文件需放在根目录下
+"""
+from framework import run
+
+run.run()
+
+# 以下为演示
+databaseService = ServiceDatabaseService() # 安装了 embed.py 插件，这里不需要 import 也可以使用
+# 注意使用时 前缀为修饰器的名称
+print(Methodget_user())
+# 输出: Executing: SELECT * FROM users WHERE id = 1
+```
+
+```yaml
+# yaml配置文件
+userId = 1
 ```
 
 ## 注意事项
