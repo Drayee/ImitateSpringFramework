@@ -5,9 +5,8 @@
 
 import functools
 
-from matplotlib.style.core import library
 
-from ..public_modules import get_param_types
+from public_modules import get_param_types
 from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated, Sequence
 from langchain_core.messages import BaseMessage
@@ -110,7 +109,7 @@ def langgraph_edge(from_node: str = None, map: dict = None ,name: str = None):
         def wrapper(state):
             kwargs = {}
             for param_item_ in param_types:
-                if param_item_ is "state":
+                if param_item_ == "state":
                     kwargs[param_item_] = state
                 else:
                     try:

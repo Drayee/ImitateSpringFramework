@@ -5,6 +5,7 @@ import library
 import signal
 import sys
 import threading
+import check
 
 
 
@@ -13,6 +14,7 @@ def run():
     # 加载 扩展插件 并 执行服务发现
     load_dlc.run()
     load_src.run()
+
 
     # 构建 服务
     build.build()

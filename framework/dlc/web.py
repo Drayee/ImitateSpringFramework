@@ -23,7 +23,6 @@ def _check():
 class Main(BaseMain):
 
     def __init__(self):
-        _check()
         library.dependencies["PostController"] = {}
         library.dependencies["GetController"] = {}
         library.dependencies["PostAutoController"] = {}
@@ -36,6 +35,10 @@ class Main(BaseMain):
         self.service_port = library.resource_yaml["service.port"]
         # 构建所有控制器实例
         self.app = FastAPI(title=self.service_title, version=self.service_version)
+
+    @staticmethod
+    def check():
+        _check()
 
     def build(self):
         for name, func in library.dependencies["PostController"].items():

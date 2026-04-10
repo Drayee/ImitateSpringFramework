@@ -10,36 +10,45 @@ logger = logging.getLogger(__name__)
 """
     服务装饰器
 """
-def Service(cls):
-    # Only apply auto_inject if __init__ is not already decorated by auto_inject
-    # Check if __init__ has the __wrapped__ attribute (from functools.wraps)
-    if not hasattr(cls.__init__, '__wrapped__'):
+class Service:
+    def __init__(self, cls):
+
         cls.__init__ = auto_inject()(cls.__init__)
 
-    def build(cls_, *args, **kwargs):
-        return cls_(*args, **kwargs)
+        def build(cls_, *args, **kwargs):
+            return cls_(*args, **kwargs)
 
-    build = functools.wraps(cls)(build)
+        build = functools.wraps(cls)(build)
 
-    setattr(cls, 'build', classmethod(build))
+        setattr(cls, 'build', classmethod(build))
 
-    library.dependencies["Service"][cls.__name__] = cls
-    logger.info(f"Service {cls.__name__} 已加入库")
-    
-    return cls
+        self.cls = cls
 
-# Attach the static methods to the Service function
-def create(cls: str, name: str = None):
-    service = library.dependencies["Service"][cls]()
-    if name is not None:
-        library.resource_dependencies[name] = service
-    return service
+        library.dependencies["Service"][self.cls.__name__] = cls
+        logger.info(f"Service {self.cls.__name__} 已加入库")
 
-def get(cls: str):
-    return library.resource_dependencies[cls]
+    def __call__(self, *args, **kwargs):
+        stack = inspect.stack()
+        caller_method = stack[1].function if len(stack) > 1 else ""
 
-Service.create = staticmethod(create)
-Service.get = staticmethod(get)
+        if caller_method not in ["build", "create"]:
+            logger.info(f"Service {self.cls.__name__} 已调用, 这是不推荐的用法, 请使用 auto_inject")
+
+        return self.cls(*args, **kwargs)
+
+    def __str__(self):
+        return self.cls.__name__
+
+    @staticmethod
+    def create(cls: str, name: str = None):
+        service = library.dependencies["Service"][cls]()
+        if name is not None:
+            library.resource_dependencies[name] = service
+        return service
+
+    @staticmethod
+    def get(cls: str):
+        return library.resource_dependencies[cls]
 
 """
     方法修饰器
@@ -140,9 +149,6 @@ def auto_inject(*same_name_args, **customize_args):
     return decorator
 
 def get_param_types(func):
-    if not callable(func):
-        logger.error(f"get_param_types called with non-callable: {func} (type: {type(func)})")
-        raise TypeError(f"{func!r} is not a callable object")
     sig = inspect.signature(func)
     param_types = {}
     for name, param in sig.parameters.items():
