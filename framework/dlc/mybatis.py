@@ -1,3 +1,4 @@
+import peewee
 from peewee import *
 import inspect
 import functools
@@ -54,10 +55,9 @@ class Main(BaseMain):
         
         library.dependencies["model"]["db"] = self.db
         library.dependencies["model"]["Base"] = self.Base
-        library.dependencies["db"] = self.db
-        library.dependencies["Base"] = self.Base
         library.resource["mybatis_db"] = self.db
         library.resource["mybatis_base"] = self.Base
+        
         logger.info(f"MyBatis Plus 插件初始化成功，数据库类型: {db_type}")
 
     @staticmethod
@@ -101,6 +101,9 @@ class Mapper(Decorator):
         if table_name is None:
             logger.error("Mapper 装饰器需要 table_name 参数")
         self.table_name = table_name
+        # 确保 model 结构存在
+        if "model" not in library.dependencies:
+            library.dependencies["model"] = {}
         if "MapperModels" not in library.dependencies["model"]:
             library.dependencies["model"]["MapperModels"] = []
 
@@ -119,9 +122,14 @@ class Mapper(Decorator):
         for name, attr_type in attrs.items():
             setattr(Model, name, attr_type)
         
+        # 确保 Mapper 结构存在
+        if "Mapper" not in library.dependencies:
+            library.dependencies["Mapper"] = {}
+        
         # 存储模型以便创建表
         library.dependencies["model"]["MapperModels"].append(Model)
         library.dependencies["model"][f"Mapper_{cls.__name__}"] = Model
+        library.dependencies["Mapper"][cls.__name__] = Model
         logger.info(f"Mapper {cls.__name__} 已映射到表 {self.table_name}")
         
         return Model
@@ -351,6 +359,7 @@ def count(model, *conditions):
 
 
 # 注册装饰器和工具函数
+library.decorator["Mapper"] = Mapper
 library.decorator["QueryWrapper"] = query_wrapper
 library.resource["mybatis_query_wrapper"] = query_wrapper
 library.resource["mybatis_insert_batch"] = insert_batch
