@@ -7,7 +7,7 @@ class User:
     username = peewee.CharField(unique=True)
     password = peewee.CharField()
     email = peewee.CharField(null=True)
-    created_at = peewee.DateTimeField(constraints=[SQL('DEFAULT CURRENT_TIMESTAMP')])
+    created_at = peewee.DateTimeField(constraints=[peewee.SQL('DEFAULT CURRENT_TIMESTAMP')])
 
 
 @Service

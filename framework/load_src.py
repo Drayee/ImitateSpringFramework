@@ -62,6 +62,7 @@ def safe_register(filepath, obj_name):
     # 收集所有顶级函数和类定义（不收集嵌套内部定义，因为会随外部定义一起执行）
     definitions = []
     for node in tree.body:
+        print(node)
         if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):
             definitions.append(node)
 
@@ -73,8 +74,7 @@ def safe_register(filepath, obj_name):
     ast.fix_missing_locations(new_tree)
 
     # 准备安全的执行环境
-    namespace = {}
-    safe_globals = {
+    namespace = {
         "__builtins__": __builtins__,
         "__name__": "__not_main__",  # 阻止模块内的 if __name__ == "__main__" 块
     }
@@ -82,7 +82,7 @@ def safe_register(filepath, obj_name):
     try:
         code = compile(new_tree, filepath, 'exec')
         # 打印编译后的代码
-        exec(code, safe_globals, namespace)
+        exec(code, namespace)
     except Exception:
         import traceback
         traceback.print_exc()
