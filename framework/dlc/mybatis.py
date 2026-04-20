@@ -3,6 +3,7 @@ from peewee import *
 import inspect
 import functools
 import logging
+import framework.library as library
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,24 @@ class Main(BaseMain):
         library.dependencies["model"]["Base"] = self.Base
         library.resource["mybatis_db"] = self.db
         library.resource["mybatis_base"] = self.Base
+        
+        # 把 peewee 模块和所有字段类嵌入到全局命名空间
+        __builtins__["peewee"] = peewee
+        __builtins__["AutoField"] = AutoField
+        __builtins__["CharField"] = CharField
+        __builtins__["IntegerField"] = IntegerField
+        __builtins__["FloatField"] = FloatField
+        __builtins__["DecimalField"] = DecimalField
+        __builtins__["BooleanField"] = BooleanField
+        __builtins__["DateField"] = DateField
+        __builtins__["DateTimeField"] = DateTimeField
+        __builtins__["TimeField"] = TimeField
+        __builtins__["TextField"] = TextField
+        __builtins__["BlobField"] = BlobField
+        __builtins__["UUIDField"] = UUIDField
+        __builtins__["ForeignKeyField"] = ForeignKeyField
+        __builtins__["ManyToManyField"] = ManyToManyField
+        __builtins__["SQL"] = SQL
         
         logger.info(f"MyBatis Plus 插件初始化成功，数据库类型: {db_type}")
 

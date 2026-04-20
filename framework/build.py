@@ -1,4 +1,4 @@
-import library
+import framework.library as library
 
 
 def build():

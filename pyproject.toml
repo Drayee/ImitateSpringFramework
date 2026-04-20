@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "yachiyoai-main"
+version = "0.1.0"
+description = ""
+authors = ["drayee <1473443474@qq.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+poetry-core = "^2.3.2"
+python-dotenv = "^1.2.2"
+pyyaml = "^6.0.3"
+langgraph = "^1.1.8"
+peewee = "^4.0.4"
+fastapi = "^0.136.0"
+uvicorn = "^0.44.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,13 +1,14 @@
-import build
-import load_dlc
-import load_src
-import library
+import logging
+from framework import build
+from framework import load_dlc
+from framework import load_src
+import framework.library as library
 import signal
 import sys
 import threading
-import check
+from framework import check
 
-
+logger = logging.getLogger(__name__)
 
 def run():
 
@@ -25,7 +26,7 @@ def run():
         thread.start()
 
     def handle_exit(signum, frame):
-        print("Exiting...")
+        logger.info("正在退出...")
         global thread
         if thread is not None:
             thread.join()

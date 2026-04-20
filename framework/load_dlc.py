@@ -1,8 +1,8 @@
 import sys
 
-import library
-import public_modules
-import check
+import framework.library as library
+from framework import public_modules
+from framework import check
 
 def run():
     import importlib

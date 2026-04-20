@@ -17,7 +17,7 @@ class Main(BaseMain):
 
         for classes in library.dependencies.keys():
             for module in library.dependencies[classes].keys():
-                __builtins__[classes+module] = library.dependencies[classes][module]
+                __builtins__[classes+"_"+module] = library.dependencies[classes][module]
                 plugin_count += 1
 
         for decorator in library.decorator.keys():
